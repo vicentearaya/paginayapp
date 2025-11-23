@@ -1,0 +1,37 @@
+<mat-toolbar color="primary">
+    <span>Libros Impresos - Dashboard</span>
+    <span class="spacer"></span>
+    <span>{{ user?.username }} (Turno {{ user?.shift }})</span>
+    <button mat-icon-button (click)="logout()">
+        <mat-icon>logout</mat-icon>
+    </button>
+</mat-toolbar>
+
+<div class="container">
+    <div class="header-image"></div>
+
+    <h2>Generar Vale</h2>
+    <div class="actions">
+        <button mat-raised-button color="accent" *ngFor="let type of allowedTypes" (click)="generateVoucher(type)">
+            {{ type }}
+        </button>
+    </div>
+
+    <h2>Mis Vales</h2>
+    <div class="voucher-list">
+        <mat-card *ngFor="let voucher of vouchers" class="voucher-card">
+            <mat-card-header>
+                <mat-card-title>{{ voucher.tipo_vale }}</mat-card-title>
+                <mat-card-subtitle>{{ voucher.codigo }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <p><strong>Lugar:</strong> {{ voucher.lugar }}</p>
+                <p><strong>Horario:</strong> {{ voucher.horario_inicio }} - {{ voucher.horario_fin }}</p>
+                <p><strong>Fecha:</strong> {{ voucher.fecha_generacion | date:'short' }}</p>
+            </mat-card-content>
+            <mat-card-actions align="end">
+                <button mat-button disabled>{{ voucher.usado ? 'USADO' : 'ACTIVO' }}</button>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</div>

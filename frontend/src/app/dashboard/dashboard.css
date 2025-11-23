@@ -1,0 +1,19 @@
+.actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.voucher-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.voucher-card {
+    width: 300px;
+}
+
+h2 {
+    color: #3f51b5;
+}
