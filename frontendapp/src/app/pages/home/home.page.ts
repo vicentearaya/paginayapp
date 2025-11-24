@@ -63,7 +63,7 @@ export class HomePage {
     private router: Router
   ) {
     const user = this.authService.getCurrentUser();
-    this.userName = user?.nombre || 'Usuario';
+    this.userName = user?.username || user?.nombre || 'Usuario';
   }
 
   goToDashboard() {

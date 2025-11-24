@@ -3,6 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { 
+  IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon,
+  IonSegment, IonSegmentButton, IonLabel, IonContent, IonRefresher,
+  IonRefresherContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent,
+  IonItem, IonInput, IonSelect, IonSelectOption, IonList, IonSpinner,
+  IonBadge
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   logOutOutline, trashOutline, nutritionOutline, cafeOutline,
@@ -28,7 +35,16 @@ addIcons({
   templateUrl: './admin.page.html',
   styleUrls: ['./admin.page.scss'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [
+    CommonModule, 
+    ReactiveFormsModule, 
+    FormsModule,
+    IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon,
+    IonSegment, IonSegmentButton, IonLabel, IonContent, IonRefresher,
+    IonRefresherContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent,
+    IonItem, IonInput, IonSelect, IonSelectOption, IonList, IonSpinner,
+    IonBadge
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AdminPage implements OnInit {
@@ -36,7 +52,9 @@ export class AdminPage implements OnInit {
   users: any[] = [];
   auditLogs: any[] = [];
   userForm: FormGroup;
-  loading: boolean = false;
+  loadingUsers: boolean = false;
+  loadingAudit: boolean = false;
+  loadingAction: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -60,48 +78,65 @@ export class AdminPage implements OnInit {
   }
 
   segmentChanged(event: any) {
-    this.selectedSegment = event.detail.value;
+    const value = event.detail?.value || event.target?.value || this.selectedSegment;
+    this.selectedSegment = value;
+    
+    // Recargar datos si es necesario
+    if (value === 'users' && this.users.length === 0) {
+      this.loadUsers();
+    } else if (value === 'audit' && this.auditLogs.length === 0) {
+      this.loadAudit();
+    }
   }
 
   loadUsers() {
-    this.loading = true;
+    this.loadingUsers = true;
     this.userService.getUsers().subscribe({
       next: (data) => {
         this.users = data;
-        this.loading = false;
+        this.loadingUsers = false;
       },
-      error: () => {
-        this.loading = false;
+      error: (err) => {
+        console.error('Error loading users:', err);
+        this.loadingUsers = false;
+        this.presentAlert('Error', 'No se pudieron cargar los usuarios');
       }
     });
   }
 
   loadAudit() {
-    this.loading = true;
+    this.loadingAudit = true;
     this.voucherService.getAudit().subscribe({
       next: (data) => {
         this.auditLogs = data;
-        this.loading = false;
+        this.loadingAudit = false;
       },
-      error: () => {
-        this.loading = false;
+      error: (err) => {
+        console.error('Error loading audit:', err);
+        this.loadingAudit = false;
+        this.presentAlert('Error', 'No se pudo cargar la auditoría');
       }
     });
   }
 
   addUser() {
-    if (this.userForm.invalid) return;
+    if (this.userForm.invalid) {
+      this.presentAlert('Error', 'Por favor completa todos los campos correctamente');
+      return;
+    }
 
-    this.loading = true;
+    this.loadingAction = true;
     this.userService.createUser(this.userForm.value).subscribe({
       next: () => {
-        this.loadUsers();
+        this.loadingAction = false;
         this.userForm.reset({ rol: 'funcionario', turno: 1 });
+        this.loadUsers();
         this.presentAlert('Éxito', 'Usuario creado correctamente');
       },
       error: (err) => {
-        this.loading = false;
-        this.presentAlert('Error', 'No se pudo crear el usuario');
+        console.error('Error creating user:', err);
+        this.loadingAction = false;
+        this.presentAlert('Error', err.error?.message || 'No se pudo crear el usuario');
       }
     });
   }
@@ -132,15 +167,17 @@ export class AdminPage implements OnInit {
   }
 
   generateExtra(type: string) {
-    this.loading = true;
+    this.loadingAction = true;
     this.voucherService.generateExtra(type).subscribe({
       next: (response) => {
+        this.loadingAction = false;
         this.loadAudit();
         this.presentAlert('Éxito', `Vale extra generado: ${response.code}`);
       },
-      error: () => {
-        this.loading = false;
-        this.presentAlert('Error', 'No se pudo generar el vale extra');
+      error: (err) => {
+        console.error('Error generating extra:', err);
+        this.loadingAction = false;
+        this.presentAlert('Error', err.error?.message || 'No se pudo generar el vale extra');
       }
     });
   }
@@ -185,7 +222,10 @@ export class AdminPage implements OnInit {
           this.users = data;
           event.target.complete();
         },
-        error: () => event.target.complete()
+        error: (err) => {
+          console.error('Error refreshing users:', err);
+          event.target.complete();
+        }
       });
     } else {
       this.voucherService.getAudit().subscribe({
@@ -193,7 +233,10 @@ export class AdminPage implements OnInit {
           this.auditLogs = data;
           event.target.complete();
         },
-        error: () => event.target.complete()
+        error: (err) => {
+          console.error('Error refreshing audit:', err);
+          event.target.complete();
+        }
       });
     }
   }

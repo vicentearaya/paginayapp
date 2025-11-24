@@ -55,7 +55,7 @@ export class LoginPage {
     this.authService.login(email, password).subscribe({
       next: (user) => {
         console.log('Login successful:', user);
-        if (user.role === 'admin') {
+        if (user.role === 'admin' || user.rol === 'admin') {
           this.router.navigate(['/pages/admin']);
         } else {
           this.router.navigate(['/pages/home']);

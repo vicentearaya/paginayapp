@@ -58,14 +58,20 @@ export class DashboardPage implements OnInit {
     private voucherService: VoucherService,
     private router: Router
   ) {
-    this.user = this.authService.getCurrentUser();
+    this.user = this.authService.currentUserValue;
     console.log('Current user:', this.user);
 
+    if (!this.user) {
+      this.router.navigate(['/pages/login']);
+      return;
+    }
+
     // Filter voucher types based on user shift
-    if (this.user && this.user.shift) {
-      const allowedTypes = this.shiftRules[this.user.shift] || [];
+    const userShift = this.user.shift || this.user.turno;
+    if (userShift) {
+      const allowedTypes = this.shiftRules[userShift] || [];
       this.voucherTypes = this.allVoucherTypes.filter(vt => allowedTypes.includes(vt.value));
-      console.log('Allowed voucher types for shift', this.user.shift, ':', this.voucherTypes);
+      console.log('Allowed voucher types for shift', userShift, ':', this.voucherTypes);
     }
   }
 

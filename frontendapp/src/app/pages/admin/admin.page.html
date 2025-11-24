@@ -56,8 +56,9 @@
               <ion-select-option [value]="3">Turno 3</ion-select-option>
             </ion-select>
           </ion-item>
-          <ion-button expand="block" type="submit" [disabled]="userForm.invalid || loading" class="ion-margin-top">
-            Crear Usuario
+          <ion-button expand="block" type="submit" [disabled]="userForm.invalid || loadingAction" class="ion-margin-top">
+            <ion-spinner *ngIf="loadingAction" name="crescent" size="small"></ion-spinner>
+            <span *ngIf="!loadingAction">Crear Usuario</span>
           </ion-button>
         </form>
       </ion-card-content>
@@ -65,8 +66,8 @@
 
     <!-- Users List -->
     <h3>Usuarios Registrados</h3>
-    <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
-    <ion-list *ngIf="!loading">
+    <ion-spinner *ngIf="loadingUsers" name="crescent"></ion-spinner>
+    <ion-list *ngIf="!loadingUsers">
       <ion-item *ngFor="let user of users">
         <ion-label>
           <h2>{{ user.nombre }}</h2>
@@ -76,6 +77,11 @@
         <ion-button fill="clear" color="danger" (click)="deleteUser(user.id)">
           <ion-icon name="trash-outline"></ion-icon>
         </ion-button>
+      </ion-item>
+      <ion-item *ngIf="users.length === 0">
+        <ion-label>
+          <p>No hay usuarios registrados</p>
+        </ion-label>
       </ion-item>
     </ion-list>
   </div>
@@ -88,12 +94,14 @@
         <ion-card-title>Vales Extra</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <ion-button expand="block" color="secondary" (click)="generateExtra('Galletas')" [disabled]="loading">
-          <ion-icon name="nutrition-outline" slot="start"></ion-icon>
+        <ion-button expand="block" color="secondary" (click)="generateExtra('Galletas')" [disabled]="loadingAction">
+          <ion-spinner *ngIf="loadingAction" name="crescent" size="small" slot="start"></ion-spinner>
+          <ion-icon *ngIf="!loadingAction" name="nutrition-outline" slot="start"></ion-icon>
           Galletas
         </ion-button>
-        <ion-button expand="block" color="tertiary" (click)="generateExtra('Bebidas')" [disabled]="loading">
-          <ion-icon name="cafe-outline" slot="start"></ion-icon>
+        <ion-button expand="block" color="tertiary" (click)="generateExtra('Bebidas')" [disabled]="loadingAction">
+          <ion-spinner *ngIf="loadingAction" name="crescent" size="small" slot="start"></ion-spinner>
+          <ion-icon *ngIf="!loadingAction" name="cafe-outline" slot="start"></ion-icon>
           Bebidas
         </ion-button>
       </ion-card-content>
@@ -101,8 +109,8 @@
 
     <!-- Audit Logs -->
     <h3>Registro de Vales</h3>
-    <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
-    <ion-list *ngIf="!loading">
+    <ion-spinner *ngIf="loadingAudit" name="crescent"></ion-spinner>
+    <ion-list *ngIf="!loadingAudit">
       <ion-item *ngFor="let log of auditLogs">
         <ion-icon [name]="log.usado ? 'checkmark-circle' : 'time'" slot="start"
           [color]="log.usado ? 'success' : 'warning'"></ion-icon>
@@ -118,6 +126,11 @@
         <ion-button *ngIf="!log.usado" fill="clear" color="primary" (click)="redeemVoucher(log.codigo)">
           <ion-icon name="checkmark-outline"></ion-icon>
         </ion-button>
+      </ion-item>
+      <ion-item *ngIf="auditLogs.length === 0">
+        <ion-label>
+          <p>No hay registros de vales</p>
+        </ion-label>
       </ion-item>
     </ion-list>
   </div>
