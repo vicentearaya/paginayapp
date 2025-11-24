@@ -1,0 +1,85 @@
+.hero-section {
+    background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-primary-shade) 100%);
+    color: white;
+    padding: 3rem 1.5rem;
+    text-align: center;
+
+    .hero-content {
+        max-width: 600px;
+        margin: 0 auto;
+
+        ion-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+        p {
+            opacity: 0.9;
+            margin: 0.5rem 0 1.5rem;
+        }
+
+        .hero-button {
+            max-width: 300px;
+            margin: 0 auto;
+        }
+    }
+}
+
+.meals-section {
+    padding: 1rem;
+
+    .meal-card {
+        margin-bottom: 1.5rem;
+
+        img {
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .meal-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+
+            ion-chip {
+                font-size: 0.85rem;
+            }
+        }
+    }
+}
+
+.info-section {
+    background: var(--ion-color-light);
+
+    .info-card {
+        text-align: center;
+        padding: 1.5rem;
+
+        ion-icon {
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+        p {
+            color: var(--ion-color-medium);
+            margin: 0;
+        }
+    }
+}

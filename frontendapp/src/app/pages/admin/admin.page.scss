@@ -1,0 +1,39 @@
+h3 {
+    margin: 1.5rem 0 1rem;
+}
+
+ion-spinner {
+    display: block;
+    margin: 2rem auto;
+}
+
+ion-list {
+    ion-item {
+        --padding-start: 0;
+
+        ion-label {
+            h2 {
+                font-weight: bold;
+                margin-bottom: 0.25rem;
+            }
+
+            p {
+                font-size: 0.9rem;
+                color: var(--ion-color-medium);
+                margin: 0.25rem 0;
+
+                &.date {
+                    font-size: 0.85rem;
+                }
+            }
+        }
+    }
+}
+
+ion-card {
+    margin-bottom: 1.5rem;
+
+    ion-button {
+        margin-top: 0.5rem;
+    }
+}

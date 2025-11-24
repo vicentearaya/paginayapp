@@ -1,0 +1,124 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="danger">
+    <ion-title>Panel de Administración</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="selectedSegment" (ionChange)="segmentChanged($event)">
+      <ion-segment-button value="users">
+        <ion-label>Usuarios</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="audit">
+        <ion-label>Auditoría</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Users Tab -->
+  <div *ngIf="selectedSegment === 'users'" class="ion-padding">
+    <!-- Add User Form -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Agregar Usuario</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <form [formGroup]="userForm" (ngSubmit)="addUser()">
+          <ion-item>
+            <ion-input label="Nombre" labelPlacement="floating" formControlName="nombre"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-input label="Email" labelPlacement="floating" type="email" formControlName="email"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-input label="Contraseña" labelPlacement="floating" type="password"
+              formControlName="password"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-select label="Rol" labelPlacement="floating" formControlName="rol">
+              <ion-select-option value="funcionario">Funcionario</ion-select-option>
+              <ion-select-option value="admin">Admin</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-select label="Turno" labelPlacement="floating" formControlName="turno">
+              <ion-select-option [value]="1">Turno 1</ion-select-option>
+              <ion-select-option [value]="2">Turno 2</ion-select-option>
+              <ion-select-option [value]="3">Turno 3</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-button expand="block" type="submit" [disabled]="userForm.invalid || loading" class="ion-margin-top">
+            Crear Usuario
+          </ion-button>
+        </form>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Users List -->
+    <h3>Usuarios Registrados</h3>
+    <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+    <ion-list *ngIf="!loading">
+      <ion-item *ngFor="let user of users">
+        <ion-label>
+          <h2>{{ user.nombre }}</h2>
+          <p>{{ user.email }}</p>
+          <p>{{ user.rol }} | Turno {{ user.turno }}</p>
+        </ion-label>
+        <ion-button fill="clear" color="danger" (click)="deleteUser(user.id)">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <!-- Audit Tab -->
+  <div *ngIf="selectedSegment === 'audit'" class="ion-padding">
+    <!-- Extra Vouchers -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Vales Extra</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-button expand="block" color="secondary" (click)="generateExtra('Galletas')" [disabled]="loading">
+          <ion-icon name="nutrition-outline" slot="start"></ion-icon>
+          Galletas
+        </ion-button>
+        <ion-button expand="block" color="tertiary" (click)="generateExtra('Bebidas')" [disabled]="loading">
+          <ion-icon name="cafe-outline" slot="start"></ion-icon>
+          Bebidas
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Audit Logs -->
+    <h3>Registro de Vales</h3>
+    <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+    <ion-list *ngIf="!loading">
+      <ion-item *ngFor="let log of auditLogs">
+        <ion-icon [name]="log.usado ? 'checkmark-circle' : 'time'" slot="start"
+          [color]="log.usado ? 'success' : 'warning'"></ion-icon>
+        <ion-label>
+          <h2>{{ log.tipo_vale }}</h2>
+          <p>{{ log.nombre }} (Turno {{ log.turno }})</p>
+          <p>Código: {{ log.codigo }} | {{ log.lugar }}</p>
+          <p class="date">{{ log.fecha_generacion | date:'short' }}</p>
+        </ion-label>
+        <ion-badge slot="end" [color]="log.usado ? 'success' : 'warning'">
+          {{ log.usado ? 'Canjeado' : 'Pendiente' }}
+        </ion-badge>
+        <ion-button *ngIf="!log.usado" fill="clear" color="primary" (click)="redeemVoucher(log.codigo)">
+          <ion-icon name="checkmark-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-content>

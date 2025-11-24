@@ -1,0 +1,70 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="goToHome()">
+        <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Dashboard</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- User Info -->
+  <div class="user-info ion-padding">
+    <h2>Bienvenido, {{ user?.nombre }}</h2>
+    <p>Turno: {{ user?.turno }}</p>
+  </div>
+
+  <!-- Generate Voucher Section -->
+  <div class="generate-section ion-padding">
+    <h3>Generar Vale</h3>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6" size-md="4" *ngFor="let type of voucherTypes">
+          <ion-button expand="block" [color]="type.color" (click)="generateVoucher(type.value)" [disabled]="loading">
+            <ion-icon [name]="type.icon" slot="start"></ion-icon>
+            {{ type.label }}
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <!-- Vouchers List -->
+  <div class="vouchers-section ion-padding">
+    <h3>Mis Vales</h3>
+
+    <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+
+    <ion-list *ngIf="!loading && vouchers.length > 0">
+      <ion-item *ngFor="let voucher of vouchers">
+        <ion-icon [name]="voucher.usado ? 'checkmark-circle' : 'time'" slot="start"
+          [color]="voucher.usado ? 'success' : 'warning'"></ion-icon>
+        <ion-label>
+          <h2>{{ voucher.tipo_vale }}</h2>
+          <p>Código: {{ voucher.codigo }}</p>
+          <p>{{ voucher.lugar }} | {{ voucher.horario_inicio }} - {{ voucher.horario_fin }}</p>
+          <p class="date">{{ voucher.fecha_generacion | date:'short' }}</p>
+        </ion-label>
+        <ion-badge slot="end" [color]="voucher.usado ? 'success' : 'warning'">
+          {{ voucher.usado ? 'Canjeado' : 'Pendiente' }}
+        </ion-badge>
+      </ion-item>
+    </ion-list>
+
+    <div *ngIf="!loading && vouchers.length === 0" class="empty-state">
+      <ion-icon name="document-text-outline" size="large" color="medium"></ion-icon>
+      <p>No tienes vales generados</p>
+    </div>
+  </div>
+</ion-content>

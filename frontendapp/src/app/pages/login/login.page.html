@@ -1,0 +1,37 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>CasinoSoft - Login</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="login-container">
+    <div class="logo-container">
+      <ion-icon name="restaurant" size="large" color="primary"></ion-icon>
+      <h1>Bienvenido</h1>
+      <p>Sistema de Gestión de Vales</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <ion-list>
+        <ion-item>
+          <ion-input label="Email" labelPlacement="floating" type="email" formControlName="email"
+            placeholder="usuario@ejemplo.com"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-input label="Contraseña" labelPlacement="floating" type="password" formControlName="password"
+            placeholder="••••••••"></ion-input>
+        </ion-item>
+      </ion-list>
+
+      <ion-text color="danger" *ngIf="error">
+        <p class="error-message">{{ error }}</p>
+      </ion-text>
+
+      <ion-button expand="block" type="submit" [disabled]="loginForm.invalid" class="login-button">
+        Iniciar Sesión
+      </ion-button>
+    </form>
+  </div>
+</ion-content>
